@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  p2psolutioncoreback:
+    image: p2psolutioncoreback
+    container_name: p2psolutioncoreback
+    
+    env_file: '.env'
+    environment:
+      PYTHONUNBUFFERED: 1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    volumes: 
+      - '.:/code'
+  
+

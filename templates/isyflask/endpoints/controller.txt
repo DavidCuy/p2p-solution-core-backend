@@ -1,0 +1,10 @@
+import json
+from typing import cast
+from flask import request
+import logging
+
+from isiflask_core.app.Data.Enum.http_status_code import HTTPStatusCode
+from isiflask_core.app.Exceptions.APIException import APIException
+from isiflask_core.utils.http_utils import build_response
+
+from api.app.Services.{model_name}Service import {model_name}Service

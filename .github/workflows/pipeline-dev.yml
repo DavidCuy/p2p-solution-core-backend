@@ -1,0 +1,93 @@
+name: Pipeline-dev
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy-container:
+    name: Deploy to dev
+    runs-on: ubuntu-latest
+    env: 
+      ENVIRONMENT: dev
+      AWS_ACCOUNT_ID: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
+      AWS_ROLE_TO_ASSUME: ${{ secrets.DEV_AWS_ROLE_TO_ASSUME }}
+      AWS_REGION: ${{ secrets.DEV_AWS_REGION }}
+      APP_NAME: "p2p-solution-core-backend"
+      APP_DESCRIPTION: "API description"
+      DB_NAME: "p2p-solution-db"
+      DB_SCHEMA: "p2p_schema"
+      DB_DRIVER: "psycopg2"
+      DB_ENGINE: "postgresql"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Configure AWS Credentials Role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{env.AWS_ROLE_TO_ASSUME}}
+          role-session-name: networking-infra-deploy
+          aws-region: ${{env.AWS_REGION}}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registries: ${{ env.AWS_ACCOUNT_ID }}
+      - name: Prepare DB Credentials
+        id: resolve-db-ssm
+        run: |
+          PARAMSTORE_OUTPUT=$(aws ssm get-parameter --name "/config/infra/$ENVIRONMENT/db/credentials")
+          DB_PARAMS=$(echo "$PARAMSTORE_OUTPUT" | jq ".Parameter.Value | fromjson")
+          DB_PASS_SECRET_ARN=$(echo "$DB_PARAMS" | jq '."db-password"' | tr -d '"')
+
+          SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id $DB_PASS_SECRET_ARN)
+          SECRET_STRING=$(echo "$SECRET_OUTPUT" | jq ".SecretString")
+          echo "::add-mask::$SECRET_STRING"
+          echo "SECRET_STRING=$SECRET_STRING" >> $GITHUB_ENV
+
+          touch .env
+
+          echo -e "APP_URL=$APP_URL" >> ./.env
+          echo -e "APP_ENV=$APP_ENV" >> ./.env
+          echo -e "APP_DEBUG=$APP_DEBUG" >> ./.env
+          echo -e "" >> ./.env
+          cat .env.dist >> .env
+
+          DB_USERNAME=$(jq '.username' <<< ${{ env.SECRET_STRING }} | tr -d '"')
+          DB_PASSWORD=$(jq '.password' <<< ${{ env.SECRET_STRING }} | tr -d '"')
+          DB_PORT=$(jq '.port' <<< ${{ env.SECRET_STRING }} | tr -d '"')
+          DB_HOST=$(jq '.host' <<< ${{ env.SECRET_STRING }} | tr -d '"')
+          
+          DB_CONNECTION_STRING="$DB_ENGINE+$DB_DRIVER://$DB_USERNAME:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
+
+          echo -e "APP_NAME=$APP_NAME" >> ./.env
+          echo -e "APP_URL=$APP_URL" >> ./.env
+          echo -e "APP_DESCRIPTION=$APP_DESCRIPTION" >> ./.env
+          echo -e "ENVIRONMENT=$ENVIRONMENT" >> ./.env
+
+          echo -e "DB_PASSWORD=$DB_PASSWORD" >> ./.env
+          echo -e "DB_HOST=$DB_HOST" >> ./.env
+          echo -e "DB_USER=$DB_USER" >> ./.env
+          echo -e "DB_DRIVER=$DB_DRIVER" >> ./.env
+          echo -e "DB_PORT=$DB_PORT" >> ./.env
+          echo -e "DB_SCHEMA=$DB_SCHEMA" >> ./.env
+          echo -e "DB_CONNECTION_STRING=$DB_CONNECTION_STRING" >> ./.env
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-publish
+        shell: bash
+        env:
+          ECR_CONTAINER_REGISTRY: ${{ secrets.DEV_ECR_CONTAINER_REGISTRY }}
+          ECR_REPO_NAME: ${{ secrets.DEV_ECR_REPO_NAME }}
+          IMAGE_TAG: dev-latest
+        run: |
+          docker build . -t "$ECR_CONTAINER_REGISTRY/$ECR_REPO_NAME:$IMAGE_TAG"
+          docker push "$ECR_CONTAINER_REGISTRY/$ECR_REPO_NAME:$IMAGE_TAG"
+          echo "IMAGE $IMAGE_TAG is pushed to $ECR_CONTAINER_REGISTRY/$ECR_REPO_NAME"
+          echo "image_tag=$IMAGE_TAG" 
+          echo "full_image=$ECR_CONTAINER_REGISTRY/$ECR_REPO_NAME:$IMAGE_TAG"

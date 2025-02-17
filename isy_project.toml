@@ -1,0 +1,20 @@
+[isy.project.definition]
+name = "p2psolutioncoreback"
+description = ""
+
+[isy.template.files]
+model = ".isy/templates/model.txt"
+service = ".isy/templates/service.txt"
+controller = ".isy/templates/controller.txt"
+endpoint = ".isy/templates/routes.txt"
+serviceEndpointConf = ".isy/templates/endpoints/service.txt"
+controllerEndpointConf = ".isy/templates/endpoints/controller.txt"
+endpointConf = ".isy/templates/endpoints/routes.txt"
+
+[isy.project.folders]
+root = "api"
+models = "api/app/Data/Models"
+services = "api/app/Services"
+controllers = "api/app/Controllers"
+endpoints = "api/routes/"
+jsons = ".isy/templates/json"

@@ -1,0 +1,1 @@
+from isiflask_core.app.Controllers.BaseController import index, find, store, update, delete
