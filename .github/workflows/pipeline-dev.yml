@@ -17,7 +17,7 @@ jobs:
       AWS_ACCOUNT_ID: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
       AWS_ROLE_TO_ASSUME: ${{ secrets.DEV_AWS_ROLE_TO_ASSUME }}
       AWS_REGION: ${{ secrets.DEV_AWS_REGION }}
-      APP_NAME: "p2p-solution-core-backend"
+      APP_NAME: "p2p-solution"
       APP_DESCRIPTION: "API description"
       APP_URL: ${{ vars.DEV_APP_URL }}
       DB_NAME: "p2p-solution-db"
