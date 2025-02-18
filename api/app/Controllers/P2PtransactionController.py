@@ -14,6 +14,10 @@ from isiflask_core.utils.http_utils import build_response
 from ..Data.Models import P2Ptransaction
 from ..Services import P2PtransactionService
 
+from api.utils.aws.ssm import get_parameter
+from api.utils.aws.sqs import send_message_to_queue
+
+QUEUE_NAME = get_parameter(ssm_name='p2p/transaction-queue')
 
 def request_transaction(service: P2PtransactionService):
     session = get_session()
@@ -24,6 +28,7 @@ def request_transaction(service: P2PtransactionService):
     try:
         body = service.insert_register(session, input_params)
         response = json.dumps(body, cls=AlchemyEncoder)
+        send_message_to_queue(QUEUE_NAME, response)
         status_code = HTTPStatusCode.OK.value
     except APIException as e:
         logging.exception("APIException occurred")

@@ -26,6 +26,7 @@ def env(env_key: str, default_value: Any) -> Any:
 
 APP_NAME    = env("APP_NAME", "Flask app")
 APP_URL     = env("APP_URL", "http://localhost")
+ENVIRONMENT = env("ENVIRONMENT", "local")
 
 DB_DRIVER               = env("DB_DRIVER", "sqlite")
 DB_CONNECTION_STRING    = env("DB_CONNECTION_STRING", "sqlite:///app.db")
