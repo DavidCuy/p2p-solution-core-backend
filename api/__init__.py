@@ -36,6 +36,10 @@ def create_app():
         response = jsonify(error.to_dict())
         response.status_code = error.status_code
         return response
+    
+    @app.route('/')
+    def home():
+        return 'Hello World'
 
     from .routes import user_router
     app.register_blueprint(user_router, url_prefix='/user')
