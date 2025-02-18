@@ -60,7 +60,6 @@ jobs:
           echo -e "" >> ./.env
           cat .env.dist >> .env
 
-          echo ${{ env.SECRET_STRING }}
           DB_USERNAME=$(jq '.username' <<< ${{ env.SECRET_STRING }} | tr -d '"')
           DB_PASSWORD=$(jq '.password' <<< ${{ env.SECRET_STRING }} | tr -d '"')
           DB_PORT=$(jq '.port' <<< ${{ env.SECRET_STRING }} | tr -d '"')
@@ -82,6 +81,8 @@ jobs:
           echo -e "DB_PORT=$DB_PORT" >> ./.env
           echo -e "DB_SCHEMA=$DB_SCHEMA" >> ./.env
           echo -e "DB_CONNECTION_STRING=$DB_CONNECTION_STRING" >> ./.env
+
+          cat .env
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-publish
