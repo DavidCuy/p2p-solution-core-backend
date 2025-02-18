@@ -9,6 +9,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        EXPORT_PORT: 5000
     ports:
       - 5000:5000
       - 5432:5432

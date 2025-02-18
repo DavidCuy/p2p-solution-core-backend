@@ -9,9 +9,12 @@ RUN apt-get update \
 # set the working directory in the container
 WORKDIR /code
 
+ARG EXPORT_PORT
+
 ENV FLASK_APP api
 ENV FLASK_RUN_HOST 0.0.0.0
 ENV FLASK_ENV development
+ENV FLASK_PORT $EXPORT_PORT
 
 # copy env file
 COPY .env .env
@@ -23,5 +26,4 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 COPY . .
-
-ENTRYPOINT ["flask", "run", "--host=0.0.0.0"]
+ENTRYPOINT flask run --host=0.0.0.0 --port=$FLASK_PORT
