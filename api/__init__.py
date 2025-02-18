@@ -8,6 +8,7 @@ from flask.json import jsonify
 import api.database.DBConnection as DBConn
 from isiflask_core.app.Exceptions.APIException import APIException
 
+MICROSERVICE_NAME = "core-services"
 
 def create_app():
     # create and configure the app
@@ -43,9 +44,9 @@ def create_app():
         return 'Hello World'
 
     from .routes import user_router
-    app.register_blueprint(user_router, url_prefix='/user')
+    app.register_blueprint(user_router, url_prefix=f'/api/{MICROSERVICE_NAME}/user')
 
     from .routes import p2ptransaction_router
-    app.register_blueprint(p2ptransaction_router, url_prefix='/p2ptransaction')
+    app.register_blueprint(p2ptransaction_router, url_prefix=f'/api/{MICROSERVICE_NAME}/p2ptransaction')
 
     return app
