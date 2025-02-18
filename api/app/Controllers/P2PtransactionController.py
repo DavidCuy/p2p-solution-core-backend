@@ -17,7 +17,7 @@ from ..Services import P2PtransactionService
 from api.utils.aws.ssm import get_parameter
 from api.utils.aws.sqs import send_message_to_queue
 
-QUEUE_NAME = get_parameter(ssm_name='p2p/transaction-queue')
+QUEUE_NAME = get_parameter(ssm_name='p2p/transaction-queue/name')
 
 def request_transaction(service: P2PtransactionService):
     session = get_session()
