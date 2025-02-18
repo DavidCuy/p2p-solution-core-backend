@@ -77,8 +77,6 @@ jobs:
           echo -e "DB_SCHEMA=$DB_SCHEMA" >> ./.env
           echo -e "DB_CONNECTION_STRING=$DB_CONNECTION_STRING" >> ./.env
 
-          cat .env
-
       - name: Build, tag, and push image to Amazon ECR
         id: build-publish
         shell: bash
@@ -87,6 +85,7 @@ jobs:
           ECR_REPO_NAME: ${{ secrets.DEV_ECR_REPO_NAME }}
           IMAGE_TAG: dev-latest
         run: |
+          ls -al
           docker build . -t "$ECR_CONTAINER_REGISTRY/$ECR_REPO_NAME:$IMAGE_TAG"
           docker push "$ECR_CONTAINER_REGISTRY/$ECR_REPO_NAME:$IMAGE_TAG"
           echo "IMAGE $IMAGE_TAG is pushed to $ECR_CONTAINER_REGISTRY/$ECR_REPO_NAME"
