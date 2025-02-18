@@ -3,31 +3,35 @@ from sqlalchemy import Column, Integer, String, Float, DateTime
 from isiflask_core.app.Data.BaseModel import BaseModel
 import Environment as env
 
-class User(BaseModel):
-    """ Table Users Database model
+class P2Ptransaction(BaseModel):
+    """ Table P2Ptransactions Database model
 
     Args:
         BaseModel (ORMClass): Parent class
 
     Returns:
-        User: Instance of model
+        P2Ptransaction: Instance of model
     """
-    __tablename__ = 'users'
+    __tablename__ = 'p2p_transaction'
     __table_args__ = {"schema": env.DB_SCHEMA}
     id = Column("id", Integer, primary_key=True)
-    name = Column("name", String)
-    unique_id = Column("unique_id", String)
+    source_id = Column("source_id", Integer)
+    dest_id = Column("dest_id", Integer)
+    amount = Column("amount", Float)
+    status = Column("status", String)
     created_at = Column("created_at", DateTime)
     
-    model_path_name = "user"
+    model_path_name = "p2ptransaction"
 
     filter_columns = [
         "id",
-        "unique_id"
+        "source_id",
+        "status"
     ]
     relationship_names = []
     search_columns = [
-        "name"
+        "amount",
+        "created_at"
     ]
     
     @classmethod
@@ -38,13 +42,13 @@ class User(BaseModel):
     def display_members(cls_) -> List[str]:
         return [
             "id",
-            "name",
-            "unique_id",
+            "source_id",
+            "dest_id",
+            "amount",
+            "status",
             "created_at"
         ]
     
     @classmethod
     def rules_for_store(cls_) -> Dict[str, List[Any]]:
-        return {
-            
-        }
+        return { }

@@ -45,4 +45,7 @@ def create_app():
     from .routes import user_router
     app.register_blueprint(user_router, url_prefix='/user')
 
+    from .routes import p2ptransaction_router
+    app.register_blueprint(p2ptransaction_router, url_prefix='/p2ptransaction')
+
     return app
