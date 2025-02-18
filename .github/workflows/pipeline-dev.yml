@@ -86,7 +86,6 @@ jobs:
           IMAGE_TAG: dev-latest
         run: |
           ls -al
-          cat .env
           docker build . -t "$ECR_CONTAINER_REGISTRY/$ECR_REPO_NAME:$IMAGE_TAG"
           docker push "$ECR_CONTAINER_REGISTRY/$ECR_REPO_NAME:$IMAGE_TAG"
           echo "IMAGE $IMAGE_TAG is pushed to $ECR_CONTAINER_REGISTRY/$ECR_REPO_NAME"
