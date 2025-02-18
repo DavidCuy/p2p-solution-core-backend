@@ -15,6 +15,7 @@ def create_app():
     app.config.from_pyfile(os.path.abspath('./Environment.py'))
     app.config['SQLALCHEMY_DATABASE_URI'] = DBConn.connect_url
     app.config['MAX_CONTENT_LENGTH'] = 150 * 1000 * 1000
+    app.url_map.strict_slashes = False
     migrate = Migrate(app, DBConn.db, render_as_batch=True)
 
     @migrate.configure
