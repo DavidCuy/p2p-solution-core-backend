@@ -1,5 +1,5 @@
 # set base image (host OS)
-FROM python:3.9-slim
+FROM python:3.12.2-slim
 
 
 RUN apt-get update \
@@ -13,6 +13,9 @@ ENV FLASK_APP api
 ENV FLASK_RUN_HOST 0.0.0.0
 ENV FLASK_ENV development
 
+# copy env file
+COPY .env .env
+
 # copy the dependencies file to the working directory
 COPY requirements.txt requirements.txt
 
@@ -21,4 +24,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-ENTRYPOINT ["bash", "./entrypoint.sh"]
+ENTRYPOINT ["flask", "run", "--host=0.0.0.0"]
