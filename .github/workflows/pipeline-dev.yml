@@ -47,7 +47,8 @@ jobs:
 
           SECRET_OUTPUT=$(aws secretsmanager get-secret-value --secret-id $DB_PASS_SECRET_ARN)
           SECRET_STRING=$(echo "$SECRET_OUTPUT" | jq ".SecretString")
-          echo "::add-mask::$SECRET_STRING"
+          #echo "::add-mask::$SECRET_STRING"
+          echo $SECRET_STRING
 
           touch .env
 
@@ -64,6 +65,7 @@ jobs:
 
           
           DB_CONNECTION_STRING="$DB_ENGINE+$DB_DRIVER://$DB_USERNAME:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
+          echo $DB_CONNECTION_STRING
 
           echo -e "APP_NAME=$APP_NAME" >> ./.env
           echo -e "APP_URL=$APP_URL" >> ./.env
