@@ -58,10 +58,10 @@ jobs:
           echo -e "" >> ./.env
           cat .env.dist >> .env
 
-          DB_USERNAME=$(jq '.username' <<< $SECRET_STRING | tr -d '"')
-          DB_PASSWORD=$(jq '.password' <<< $SECRET_STRING | tr -d '"')
-          DB_PORT=$(jq '.port' <<< $SECRET_STRING | tr -d '"')
-          DB_HOST=$(jq '.host' <<< $SECRET_STRING | tr -d '"')
+          DB_USERNAME=$(jq '.username | fromjson' <<< $SECRET_STRING | tr -d '"')
+          DB_PASSWORD=$(jq '.password | fromjson' <<< $SECRET_STRING | tr -d '"')
+          DB_PORT=$(jq '.port | fromjson' <<< $SECRET_STRING | tr -d '"')
+          DB_HOST=$(jq '.host | fromjson' <<< $SECRET_STRING | tr -d '"')
 
           
           DB_CONNECTION_STRING="$DB_ENGINE+$DB_DRIVER://$DB_USERNAME:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
