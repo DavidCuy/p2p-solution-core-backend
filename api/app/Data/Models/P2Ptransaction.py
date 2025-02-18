@@ -1,6 +1,8 @@
 from typing import Any, Dict, List
 from sqlalchemy import Column, Integer, String, Float, DateTime
+from sqlalchemy.sql import func
 from isiflask_core.app.Data.BaseModel import BaseModel
+from isiflask_core.app.Validators.RequestValidator import RequestValidator
 import Environment as env
 
 class P2Ptransaction(BaseModel):
@@ -18,8 +20,8 @@ class P2Ptransaction(BaseModel):
     source_id = Column("source_id", Integer)
     dest_id = Column("dest_id", Integer)
     amount = Column("amount", Float)
-    status = Column("status", String)
-    created_at = Column("created_at", DateTime)
+    status = Column("status", String, default="created")
+    created_at = Column("created_at", DateTime, default=func.now())
     
     model_path_name = "p2ptransaction"
 
@@ -51,4 +53,11 @@ class P2Ptransaction(BaseModel):
     
     @classmethod
     def rules_for_store(cls_) -> Dict[str, List[Any]]:
-        return { }
+        return {
+            "source_id": ["required", "numeric"],
+            "dest_id": ["required", "numeric"],
+            "amount": ["required", "numeric"]
+        }
+    source_id = Column("source_id", Integer)
+    dest_id = Column("dest_id", Integer)
+    amount

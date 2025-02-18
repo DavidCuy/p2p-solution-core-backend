@@ -1,5 +1,6 @@
 from typing import Any, Dict, List
-from sqlalchemy import Column, Integer, String, Float, DateTime
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.sql import func
 from isiflask_core.app.Data.BaseModel import BaseModel
 import Environment as env
 
@@ -17,7 +18,7 @@ class User(BaseModel):
     id = Column("id", Integer, primary_key=True)
     name = Column("name", String)
     unique_id = Column("unique_id", String)
-    created_at = Column("created_at", DateTime)
+    created_at = Column("created_at", DateTime, default=func.now())
     
     model_path_name = "user"
 
